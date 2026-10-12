@@ -1,9 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 namespace model\manager;
+
 use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 use Symfony\Component\Mime\Email;
 
 class MailManager
@@ -14,13 +16,16 @@ class MailManager
     public function __construct()
     {
         $this->senderEmail = MAILER_EMAIL;
-        $dsn = sprintf(
-            'smtp://%s:%s@smtp.gmail.com:587',
-            urlencode(MAILER_EMAIL),
-            urlencode(MAILER_APP_PASSWORD)
+
+        $transport = new EsmtpTransport(
+            'smtp.gmail.com',
+            587,
+            false
         );
 
-        $transport = Transport::fromDsn($dsn);
+        $transport->setUsername(MAILER_EMAIL);
+        $transport->setPassword(MAILER_APP_PASSWORD);
+
         $this->mailer = new Mailer($transport);
     }
 
@@ -30,11 +35,11 @@ class MailManager
     ): void {
 
         $verificationLink =
-            'http://localhost/Maison_Rosalie/public/index.php'
-            . '?action=verifyEmail&key='
+            'http://localhost/'
+            . '?page=verifyEmail&key='
             . urlencode($generatedKey);
 
-        $email = (new Email())
+        $message = (new Email())
             ->from($this->senderEmail)
             ->to($email)
             ->subject('Confirmez votre adresse e-mail')
@@ -42,12 +47,12 @@ class MailManager
                 '<h2>Bienvenue chez Maison Rosalie !</h2>
                 <p>Veuillez confirmer votre adresse e-mail.</p>
                 <p>
-                    <a href="' . htmlspecialchars($verificationLink) . '">
+                    <a href="' . htmlspecialchars($verificationLink, ENT_QUOTES, 'UTF-8') . '">
                         Confirmer mon adresse e-mail
                     </a>
                 </p>'
             );
 
-        $this->mailer->send($email);
+        $this->mailer->send($message);
     }
 }
