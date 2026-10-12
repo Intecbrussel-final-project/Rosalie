@@ -18,7 +18,7 @@ try {
 }
 
 // si nous sommes connecté en tant qu'administrateur et que nous avons cliqué sur la partie administration
-if (isset($_SESSION['role_name']) && $_SESSION['role_name'] === 'admin' && isset($_GET['pg']) && $_GET['pg'] === 'admin') {
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin' && isset($_GET['pg']) && $_GET['pg'] === 'admin') {
     // on charge le contrôleur admin
     require_once RACINE_PATH . "/controller/adminController.php";
 }else{

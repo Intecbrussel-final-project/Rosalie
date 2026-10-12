@@ -5,34 +5,47 @@ declare(strict_types=1);
 namespace model\manager;
 
 use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
+use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
+use Throwable;
 
 class MailManager
 {
-    private Mailer $mailer;
+    private ?Mailer $mailer = null;
     private string $senderEmail;
+    private string $logFile;
 
     public function __construct()
     {
         $this->senderEmail = MAILER_EMAIL;
+        $this->logFile = RACINE_PATH . '/mail_debug.log';
 
-        $transport = new EsmtpTransport(
-            'smtp.gmail.com',
-            587,
-            false
-        );
+        $this->log('INIT', 'Initialisation du MailManager');
 
-        $transport->setUsername(MAILER_EMAIL);
-        $transport->setPassword(MAILER_APP_PASSWORD);
+        try {
+            // urlencode() aussi sur le mot de passe: indispensable si celui-ci
+            // contient @, :, /, #, ?, etc.
+            $dsn = sprintf(
+                'smtp://%s:%s@smtp.webdev-cf2m.be:587?encryption=tls&verify_peer=0',
+                urlencode(MAILER_EMAIL),
+                urlencode(MAILER_PASSWORD)
+            );
 
-        $this->mailer = new Mailer($transport);
+            $transport = Transport::fromDsn($dsn);
+            $this->mailer = new Mailer($transport);
+
+            $this->log('INIT_OK', 'Transport SMTP créé: smtp.webdev-cf2m.be:587 / TLS');
+        } catch (Throwable $e) {
+            $this->logException('INIT_ERROR', $e);
+        }
     }
 
-    public function sendVerificationEmail(
-        string $email,
-        string $generatedKey
-    ): void {
+    public function sendVerificationEmail(string $email, string $generatedKey): void
+    {
+        if ($this->mailer === null) {
+            $this->log('SEND_ABORTED', 'Mailer non initialisé. Destinataire: ' . $email);
+            return;
+        }
 
         $verificationLink =
             'http://localhost/'
@@ -53,6 +66,40 @@ class MailManager
                 </p>'
             );
 
-        $this->mailer->send($message);
+        $this->log('SEND_START', 'Tentative d’envoi vers: ' . $email);
+
+        try {
+            $this->mailer->send($message);
+            $this->log('SEND_OK', 'E-mail accepté par le transport SMTP pour: ' . $email);
+        } catch (Throwable $e) {
+            $this->logException('SEND_ERROR', $e);
+        }
+    }
+
+    private function log(string $type, string $message): void
+    {
+        $line = sprintf(
+            "[%s] [%s] %s%s",
+            date('Y-m-d H:i:s'),
+            $type,
+            $message,
+            PHP_EOL
+        );
+
+        @file_put_contents($this->logFile, $line, FILE_APPEND | LOCK_EX);
+    }
+
+    private function logException(string $type, Throwable $e): void
+    {
+        $this->log(
+            $type,
+            sprintf(
+                "%s: %s | file=%s:%d",
+                get_class($e),
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            )
+        );
     }
 }

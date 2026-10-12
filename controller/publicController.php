@@ -1,11 +1,13 @@
 <?php
 // chemin vers les dépendances
+use model\manager\MailManager;
+
 use model\mapping\UserMapping;
 use model\manager\RecipeManager;
 use model\manager\IngredientsManager;
 use model\manager\StepsManager;
 use model\manager\UserManager;
-use model\manager\MailManager;
+
 use model\manager\CommentManager;
 use model\manager\RatingManager;
 use model\mapping\CommentMapping;
@@ -127,6 +129,7 @@ elseif ($page === 'inscription') {
     }
     if (empty($errors)) {
 
+    
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $user = new UserMapping([
             'username' => $username,
@@ -136,14 +139,18 @@ elseif ($page === 'inscription') {
         ]);
 
         if ($userManager->createUser($user)) {
-             $mailManager = new MailManager();
+            $success = true;
+            
+
+            
+            $mailManager = new MailManager();
             $mailManager->sendVerificationEmail(
                 $email,
                 $user->getGeneratedKey()
-            ); 
-     
-            $success = true;
+            );
+            
         }
+        
     }
 }
     require_once RACINE_PATH. '/view/inscription.php';
