@@ -52,15 +52,13 @@ require_once __DIR__ . "/inc/header.php";
                 <h2 class="contact-form-title">Envoyez-nous un message</h2>
 
                 <label class="sr-only" for="name">Nom complet</label>
-                <input class="contact-field" type="text" id="name" name="name" placeholder="Nom complet *"
-                    required>
+                <input class="contact-field" type="text" id="name" name="name" placeholder="Nom complet *" required>
 
                 <label class="sr-only" for="email">Adresse e-mail</label>
                 <input class="contact-field" type="email" id="email" name="email" placeholder="Adresse e-mail *"
                     required>
-                    <label class="sr-only" for="subject">Sujet</label>
-                <input class="contact-field" type="text" id="subject" name="subject" placeholder="Sujet *"
-                    required>
+                <label class="sr-only" for="subject">Sujet</label>
+                <input class="contact-field" type="text" id="subject" name="subject" placeholder="Sujet *" required>
 
                 <label class="sr-only" for="message">Votre message</label>
                 <textarea class="contact-field contact-textarea" id="message" name="message" rows="10"
@@ -74,12 +72,8 @@ require_once __DIR__ . "/inc/header.php";
                     </svg>
                 </button>
             </form>
-
             <div class="contact-map">
-                <iframe class="contact-map-frame"
-                    title="Plan d'accès Maison Rosalie, Rue des Pâtissiers 12, 1000 Bruxelles"
-                    src="https://www.google.com/maps?q=Rue+des+P%C3%A2tissiers+12,+1000+Bruxelles,+Belgique&output=embed"
-                    loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                <div id="map"></div>
             </div>
         </div>
     </section>

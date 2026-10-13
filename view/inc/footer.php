@@ -2,7 +2,7 @@
     <div class="container">
 
         <a class="footer-logo" href="/"><img src="images/figma/footer-logo.png" alt="Maison Rosalie"></a>
-
+        <!-- 
         <section class="footer-col">
             <h2 class="footer-title">Nos recettes</h2>
             <ul class="footer-list">
@@ -10,7 +10,7 @@
                 <li><a class="footer-link" href="/?page=recettes">Pralines citronnelle</a></li>
                 <li><a class="footer-link" href="/?page=recettes">Pralines cerisette</a></li>
             </ul>
-        </section>
+        </section> -->
 
         <section class="footer-col">
             <h2 class="footer-title">Nous contacter</h2>
@@ -62,8 +62,12 @@
 
     </div>
 </footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script src="script/script.js"></script>
+
 <script src="script/validation.js"></script>
+
 <script src="script/portions.js"></script>
 </body>
 
