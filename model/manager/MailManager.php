@@ -48,8 +48,8 @@ class MailManager
         }
 
         $verificationLink =
-            'http://localhost/'
-            . '?page=verifyEmail&key='
+            $this->siteUrl()
+            . '/?page=verifyEmail&key='
             . urlencode($generatedKey);
 
         $message = (new Email())
@@ -74,6 +74,23 @@ class MailManager
         } catch (Throwable $e) {
             $this->logException('SEND_ERROR', $e);
         }
+    }
+
+    // adresse du dossier public/ du site, ex. https://2026.webdev-cf2m.be/choco2/public
+    // SITE_URL (config.php) si elle est définie, sinon déduite de la requête en cours
+    private function siteUrl(): string
+    {
+        if (defined('SITE_URL')) {
+            return rtrim(SITE_URL, '/');
+        }
+
+        $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https'
+            || ($_SERVER['SERVER_PORT'] ?? '') == 443;
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $dir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+
+        return ($https ? 'https' : 'http') . '://' . $host . $dir;
     }
 
     private function log(string $type, string $message): void
