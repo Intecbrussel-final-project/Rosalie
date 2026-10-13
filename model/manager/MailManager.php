@@ -66,14 +66,106 @@ class MailManager
                 </p>'
             );
 
-        $this->log('SEND_START', 'Tentative d’envoi vers: ' . $email);
+        $this->deliver($message, $email);
+    }
+
+    // ---------- notifications envoyées aux administrateurs ----------
+
+    // nouvel avis (note + commentaire) sur une recette
+    public function notifyNewReview(
+        array $adminEmails,
+        string $recipeTitle,
+        string $recipeSlug,
+        string $username,
+        int $rating,
+        string $comment
+    ): void {
+        $link = $this->siteUrl() . '/?page=recetteDetails&slug=' . urlencode($recipeSlug) . '#avis';
+
+        $this->notifyAdmins(
+            $adminEmails,
+            'Nouvel avis sur « ' . $recipeTitle . ' »',
+            '<h2>Nouvel avis sur « ' . $this->e($recipeTitle) . ' »</h2>
+            <p><strong>' . $this->e($username) . '</strong> a donné la note de ' . $rating . '/5 :</p>
+            <blockquote>' . nl2br($this->e($comment)) . '</blockquote>
+            <p><a href="' . $this->e($link) . '">Voir l’avis sur le site</a></p>'
+        );
+    }
+
+    // nouveau message envoyé depuis la page contact ; « Répondre » écrit directement au visiteur
+    public function notifyNewContactMessage(
+        array $adminEmails,
+        string $name,
+        string $email,
+        string $subject,
+        string $message
+    ): void {
+        $this->notifyAdmins(
+            $adminEmails,
+            'Nouveau message : ' . $subject,
+            '<h2>Nouveau message de contact</h2>
+            <p><strong>De :</strong> ' . $this->e($name) . ' &lt;' . $this->e($email) . '&gt;<br>
+            <strong>Sujet :</strong> ' . $this->e($subject) . '</p>
+            <blockquote>' . nl2br($this->e($message)) . '</blockquote>
+            <p>Répondez simplement à cet e-mail pour écrire à ' . $this->e($name) . '.</p>',
+            $email
+        );
+    }
+
+    // nouvelle inscription
+    public function notifyNewUser(array $adminEmails, string $username, string $email): void
+    {
+        $this->notifyAdmins(
+            $adminEmails,
+            'Nouvelle inscription : ' . $username,
+            '<h2>Nouvelle inscription</h2>
+            <p><strong>' . $this->e($username) . '</strong> (' . $this->e($email) . ')
+            vient de créer un compte. Il reste à confirmer son adresse e-mail.</p>'
+        );
+    }
+
+    private function notifyAdmins(array $adminEmails, string $subject, string $html, ?string $replyTo = null): void
+    {
+        if ($this->mailer === null) {
+            $this->log('NOTIFY_ABORTED', 'Mailer non initialisé. Sujet: ' . $subject);
+            return;
+        }
+        if ($adminEmails === []) {
+            $this->log('NOTIFY_SKIPPED', 'Aucun administrateur à prévenir. Sujet: ' . $subject);
+            return;
+        }
+
+        // pas de retour à la ligne dans un en-tête d'e-mail
+        $subject = trim(preg_replace('/\s+/', ' ', $subject));
+
+        $message = (new Email())
+            ->from($this->senderEmail)
+            ->to(...$adminEmails)
+            ->subject('[Maison Rosalie] ' . $subject)
+            ->html($html);
+        if ($replyTo !== null) {
+            $message->replyTo($replyTo);
+        }
+
+        $this->deliver($message, implode(', ', $adminEmails));
+    }
+
+    // envoie l'e-mail sans jamais interrompre la page : les erreurs vont dans mail_debug.log
+    private function deliver(Email $message, string $recipients): void
+    {
+        $this->log('SEND_START', 'Tentative d’envoi vers: ' . $recipients);
 
         try {
             $this->mailer->send($message);
-            $this->log('SEND_OK', 'E-mail accepté par le transport SMTP pour: ' . $email);
+            $this->log('SEND_OK', 'E-mail accepté par le transport SMTP pour: ' . $recipients);
         } catch (Throwable $e) {
             $this->logException('SEND_ERROR', $e);
         }
+    }
+
+    private function e(string $text): string
+    {
+        return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
     }
 
     // adresse du dossier public/ du site, ex. https://2026.webdev-cf2m.be/choco2/public

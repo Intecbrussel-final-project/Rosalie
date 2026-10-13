@@ -55,6 +55,16 @@ public function getUserByEmail(string $email): array|false
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+// adresses des administrateurs, pour les notifications par e-mail
+public function getAdminEmails(): array
+{
+    $sql = "SELECT email FROM users WHERE role = 'admin'";
+    $stmt = $this->connect->prepare($sql);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
 public function verifyEmail(string $generatedKey): bool
 {
     $sql = "UPDATE users

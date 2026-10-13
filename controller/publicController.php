@@ -130,6 +130,14 @@ elseif ($page === 'contact') {
             ]);
             if ($contactManager->createMessage($contact)) {
                 $success = true;
+
+                (new MailManager())->notifyNewContactMessage(
+                    $userManager->getAdminEmails(),
+                    $name,
+                    $email,
+                    $subject,
+                    $message
+                );
             }
         }
     }
@@ -188,6 +196,7 @@ elseif ($page === 'inscription') {
                 $email,
                 $user->getGeneratedKey()
             );
+            $mailManager->notifyNewUser($userManager->getAdminEmails(), $username, $email);
             
         }
         
@@ -275,14 +284,25 @@ elseif ($page === 'recetteDetails') {
                 $ratingManager->saveRating($currentUserId, $id, $reviewValues['rating']);
                 $commentManager->addComment($comment);
                 $connectPDO->commit();
-
-                // Post/Redirect/Get : évite le double envoi au rafraîchissement
-                header('Location: ?page=recetteDetails&slug=' . urlencode($recetteDetails->getSlug()) . '&avis=ok#avis');
-                exit;
             } catch (Exception $e) {
                 $connectPDO->rollBack();
                 $reviewErrors[] = "Une erreur est survenue, votre avis n'a pas été enregistré.";
             }
+        }
+
+        if (empty($reviewErrors)) {
+            (new MailManager())->notifyNewReview(
+                $userManager->getAdminEmails(),
+                $recetteDetails->getTitle(),
+                $recetteDetails->getSlug(),
+                $_SESSION['username'] ?? '',
+                $reviewValues['rating'],
+                $reviewValues['message']
+            );
+
+            // Post/Redirect/Get : évite le double envoi au rafraîchissement
+            header('Location: ?page=recetteDetails&slug=' . urlencode($recetteDetails->getSlug()) . '&avis=ok#avis');
+            exit;
         }
     }
 
