@@ -286,7 +286,17 @@ elseif ($page === 'recetteDetails') {
         }
     }
 
-    $comments = $commentManager->getPublishedByRecipeId($id);
+    // pagination des commentaires : ?avis_page=N, ramené entre 1 et la dernière page
+    $commentsPerPage = 6;
+    $commentsTotal = $commentManager->countPublishedByRecipeId($id);
+    $commentsPages = max(1, (int) ceil($commentsTotal / $commentsPerPage));
+    $commentsPage = min(max(1, (int) ($_GET['avis_page'] ?? 1)), $commentsPages);
+
+    $comments = $commentManager->getPublishedByRecipeId(
+        $id,
+        $commentsPerPage,
+        ($commentsPage - 1) * $commentsPerPage
+    );
     $ratingSummary = $ratingManager->getSummary($id);
 
 

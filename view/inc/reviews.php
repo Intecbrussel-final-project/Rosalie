@@ -1,11 +1,38 @@
 <?php
 // view/inc/reviews.php — section « Avis De Gourmands » de la page recette
 // variables fournies par le contrôleur : $comments, $ratingSummary, $reviewErrors,
-// $reviewValues, $reviewSent, $currentUserId, $recetteDetails
+// $reviewValues, $reviewSent, $currentUserId, $recetteDetails,
+// $commentsPage, $commentsPages
 
 $average = $ratingSummary['average'];
 $total = $ratingSummary['total'];
 $isLogged = $currentUserId !== null;
+
+// lien vers une page de commentaires (la page 1 garde l'URL de la recette)
+$reviewsPageUrl = function (int $n) use ($recetteDetails): string {
+    $url = '?page=recetteDetails&slug=' . urlencode($recetteDetails->getSlug());
+    if ($n > 1) {
+        $url .= '&avis_page=' . $n;
+    }
+    return htmlspecialchars($url . '#avis');
+};
+
+// numéros affichés : première, dernière et voisines de la page courante ;
+// null = « … » (un seul numéro manquant est affiché plutôt que remplacé par « … »)
+$reviewsPageLinks = [];
+$previous = 0;
+foreach ([1, $commentsPage - 1, $commentsPage, $commentsPage + 1, $commentsPages] as $n) {
+    if ($n <= $previous || $n > $commentsPages) {
+        continue;
+    }
+    if ($n - $previous === 2) {
+        $reviewsPageLinks[] = $n - 1;
+    } elseif ($n - $previous > 2) {
+        $reviewsPageLinks[] = null;
+    }
+    $reviewsPageLinks[] = $n;
+    $previous = $n;
+}
 ?>
 <section class="reviews" id="avis">
     <div class="container reviews-top">
@@ -114,6 +141,37 @@ $isLogged = $currentUserId !== null;
                     </li>
                 <?php endforeach; ?>
             </ul>
+
+            <?php if ($commentsPages > 1): ?>
+                <nav class="review-pagination" aria-label="Pages des commentaires">
+                    <?php if ($commentsPage > 1): ?>
+                        <a class="review-page review-page--nav" href="<?= $reviewsPageUrl($commentsPage - 1) ?>" rel="prev">
+                            <span aria-hidden="true">‹</span> Précédent
+                        </a>
+                    <?php endif; ?>
+
+                    <ul class="review-pages">
+                        <?php foreach ($reviewsPageLinks as $n): ?>
+                            <li>
+                                <?php if ($n === null): ?>
+                                    <span class="review-page-gap" aria-hidden="true">…</span>
+                                <?php elseif ($n === $commentsPage): ?>
+                                    <span class="review-page is-current" aria-current="page"><?= $n ?></span>
+                                <?php else: ?>
+                                    <a class="review-page" href="<?= $reviewsPageUrl($n) ?>"
+                                        aria-label="Page <?= $n ?>"><?= $n ?></a>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <?php if ($commentsPage < $commentsPages): ?>
+                        <a class="review-page review-page--nav" href="<?= $reviewsPageUrl($commentsPage + 1) ?>" rel="next">
+                            Suivant <span aria-hidden="true">›</span>
+                        </a>
+                    <?php endif; ?>
+                </nav>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>

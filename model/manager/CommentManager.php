@@ -8,8 +8,19 @@ use model\mapping\CommentMapping;
 
 class CommentManager extends AbstractManager
 {
-    // commentaires publiés d'une recette, avec le nom de l'auteur et sa note
-    public function getPublishedByRecipeId(int $recipeId): array
+    // nombre de commentaires publiés d'une recette (pour la pagination)
+    public function countPublishedByRecipeId(int $recipeId): int
+    {
+        $sql = "SELECT COUNT(*) FROM comments
+                WHERE recipe_id = :recipe_id AND status = 'published'";
+        $stmt = $this->connect->prepare($sql);
+        $stmt->execute(['recipe_id' => $recipeId]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    // commentaires publiés d'une recette, avec le nom de l'auteur et sa note,
+    // une page à la fois : $limit commentaires à partir du rang $offset
+    public function getPublishedByRecipeId(int $recipeId, int $limit, int $offset = 0): array
     {
         $sql = "SELECT c.id, c.author_id, c.recipe_id, c.message, c.created_at, c.status,
                        u.username, r.rating
@@ -17,9 +28,13 @@ class CommentManager extends AbstractManager
                 JOIN users AS u ON u.id = c.author_id
                 LEFT JOIN ratings AS r ON r.user_id = c.author_id AND r.recipe_id = c.recipe_id
                 WHERE c.recipe_id = :recipe_id AND c.status = 'published'
-                ORDER BY c.created_at DESC, c.id DESC";
+                ORDER BY c.created_at DESC, c.id DESC
+                LIMIT :limit OFFSET :offset";
         $stmt = $this->connect->prepare($sql);
-        $stmt->execute(['recipe_id' => $recipeId]);
+        $stmt->bindValue(':recipe_id', $recipeId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         $comments = [];
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {

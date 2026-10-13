@@ -1816,6 +1816,65 @@ background: var(--bg-dark-brown);
   text-align: center;
 }
 
+/* pagination des commentaires */
+.review-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 36px;
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+
+.review-pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.review-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 36px;
+  height: 36px;
+  padding-inline: 10px;
+  border: 1px solid var(--bg-main);
+  border-radius: 18px;
+  color: var(--bg-main);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+a.review-page:hover,
+a.review-page:focus-visible {
+  border-color: var(--color-orange);
+  background-color: var(--color-orange);
+  color: var(--bg-main);
+}
+
+a.review-page:focus-visible {
+  outline: 2px solid var(--bg-main);
+  outline-offset: 2px;
+}
+
+.review-page.is-current {
+  border-color: var(--bg-main);
+  background-color: var(--bg-main);
+  color: var(--bg-dark-brown);
+  font-weight: 700;
+}
+
+.review-page--nav {
+  padding-inline: 16px;
+}
+
+.review-page-gap {
+  padding-inline: 2px;
+}
+
 @media (max-width: 900px) {
   .reviews-top,
   .review-form-body {
@@ -2353,6 +2412,17 @@ background: var(--bg-dark-brown);
 
   .review-message {
     font-size: 14px;
+  }
+
+  .review-pagination {
+    gap: 8px;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+
+  .review-page {
+    min-width: 32px;
+    height: 32px;
   }
 }
 
