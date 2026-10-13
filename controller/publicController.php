@@ -1,22 +1,25 @@
 <?php
 // chemin vers les dépendances
 use model\manager\MailManager;
-
-use model\mapping\UserMapping;
 use model\manager\RecipeManager;
 use model\manager\IngredientsManager;
 use model\manager\StepsManager;
 use model\manager\UserManager;
-
 use model\manager\CommentManager;
 use model\manager\RatingManager;
+use model\manager\ContactManager;
+
+use model\mapping\UserMapping;
 use model\mapping\CommentMapping;
+use model\mapping\ContactMapping;
+
 $recipeManager = new RecipeManager($connectPDO);
 $ingredientsManager = new IngredientsManager($connectPDO);
 $stepsPrepManager=new StepsManager($connectPDO);
 $userManager = new UserManager($connectPDO);
 $commentManager = new CommentManager($connectPDO);
 $ratingManager = new RatingManager($connectPDO);
+$contactManager = new ContactManager($connectPDO);
 
 $page = $_GET['page']?? 'accueil';
 
@@ -94,7 +97,44 @@ if ($page === 'accueil') {
     require_once RACINE_PATH. '/view/apropos.php';
 }
 elseif ($page === 'contact') {
-    require_once RACINE_PATH. '/view/contact.php';
+
+    $errors = [];
+    $success = false;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $subject = trim($_POST['subject'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+
+        if ($name === '') {
+            $errors[] = "Le nom est obligatoire.";
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "L'adresse e-mail n'est pas valide.";
+        }
+        if ($subject === '') {
+            $errors[] = "Le sujet est obligatoire.";
+        }
+        if ($message === '') {
+            $errors[] = "Le message est obligatoire.";
+        }
+        if (empty($errors)) {
+
+            $contact = new ContactMapping([
+                'name' => $name,
+                'email' => $email,
+                'subject' => $subject,
+                'message' => $message
+            ]);
+            if ($contactManager->createMessage($contact)) {
+                $success = true;
+            }
+        }
+    }
+
+    require_once RACINE_PATH . '/view/contact.php';
 }
 elseif ($page === 'recettes') {
 
@@ -113,7 +153,7 @@ elseif ($page === 'inscription') {
     $password = $_POST['password'] ?? '';
     $passwordConfirm = $_POST['password_confirm'] ?? '';
     if ($userManager->emailOrUsernameExists($email, $username)) {
-        $errors[] = "Email ou nom d'utilisateur existe déjà";
+        $errors[] = "Ces informations sont déjà utilisées dans le système.";
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "L'adresse email n'est pas valide";

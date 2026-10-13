@@ -51,12 +51,15 @@ require_once __DIR__ . "/inc/header.php";
             <form class="contact-form" action="/?page=contact" method="post">
                 <h2 class="contact-form-title">Envoyez-nous un message</h2>
 
-                <label class="sr-only" for="fullname">Nom complet</label>
-                <input class="contact-field" type="text" id="fullname" name="fullname" placeholder="Nom complet *"
+                <label class="sr-only" for="name">Nom complet</label>
+                <input class="contact-field" type="text" id="name" name="name" placeholder="Nom complet *"
                     required>
 
                 <label class="sr-only" for="email">Adresse e-mail</label>
                 <input class="contact-field" type="email" id="email" name="email" placeholder="Adresse e-mail *"
+                    required>
+                    <label class="sr-only" for="subject">Sujet</label>
+                <input class="contact-field" type="text" id="subject" name="subject" placeholder="Sujet *"
                     required>
 
                 <label class="sr-only" for="message">Votre message</label>
