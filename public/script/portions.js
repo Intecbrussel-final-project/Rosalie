@@ -9,6 +9,7 @@ const minus = document.querySelector('#minus');
 
 const ingredients = document.querySelectorAll('.ingredient-quantity');
 
+const personLabel = document.getElementById('person-label');
 
 function updateIngredients() {
 
@@ -27,6 +28,9 @@ function updateIngredients() {
 
     // Mise à jour du nombre de portions
     portionCount.textContent = currentPortions;
+
+    personLabel.textContent =
+    currentPortions === 1 ? 'Personne' : 'Personnes';
 }
 
 
@@ -34,8 +38,8 @@ plus.addEventListener('click', function () {
 
     // Augmenter le nombre de portions
     currentPortions++;
-
     updateIngredients();
+
 });
 
 
@@ -44,7 +48,6 @@ minus.addEventListener('click', function () {
     // Empêcher d'avoir moins d'une portion
     if (currentPortions > 1) {
         currentPortions--;
-
         updateIngredients();
     }
 

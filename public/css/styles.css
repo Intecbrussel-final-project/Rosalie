@@ -2579,6 +2579,7 @@ a.contact-info-link:focus-visible {
   padding: 8px 12px;
   border: 1px solid #d8d0c8;
   border-radius: 30px;
+  margin: 0 0 30px 0;
 }
 
 .portions button {

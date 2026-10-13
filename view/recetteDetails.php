@@ -7,31 +7,31 @@ require_once __DIR__ . "/inc/header.php";
             <div class="recipe-grid">
                 <div class="recipe-info">
                     <?php
-                  
-                   $title = $recetteDetails->getTitle();
-                   if (str_starts_with($title, 'La tablette')) {
-                       $productType = 'La tablette';
-                       $typeClass = 'tablette';
-                       $flavor = trim(str_replace('La tablette', '', $title));
-                   } else {
-                       $productType = 'La Praline';
-                       $typeClass = 'praline';
-                       $flavor = trim(str_replace('La Praline', '', $title));
-                   }
 
-                   $flavorClass = strtolower($flavor);
-                   $flavorClass = str_replace(
-                       ["l’", "l'", "l"],
-                       '',
-                       $flavorClass
-                   );
-                   $flavorClass = trim($flavorClass);
-                   ?>
-                
+                    $title = $recetteDetails->getTitle();
+                    if (str_starts_with($title, 'La tablette')) {
+                        $productType = 'La tablette';
+                        $typeClass = 'tablette';
+                        $flavor = trim(str_replace('La tablette', '', $title));
+                    } else {
+                        $productType = 'La Praline';
+                        $typeClass = 'praline';
+                        $flavor = trim(str_replace('La Praline', '', $title));
+                    }
+
+                    $flavorClass = strtolower($flavor);
+                    $flavorClass = str_replace(
+                        ["l’", "l'", "l"],
+                        '',
+                        $flavorClass
+                    );
+                    $flavorClass = trim($flavorClass);
+                    ?>
+
 
                     <h2 class="recipe-title"> <?= htmlspecialchars($productType) ?></h2>
                     <h2 class="card-flavor <?= $typeClass ?> <?= $flavorClass ?>">
-                    <?= htmlspecialchars($flavor) ?>
+                        <?= htmlspecialchars($flavor) ?>
                     </h2>
 
                     <img class="recipe-inside-img"
@@ -50,7 +50,6 @@ require_once __DIR__ . "/inc/header.php";
                         src="images/main-recipe-img/<?= htmlspecialchars($recetteDetails->getMainImage()) ?>"
                         alt="<?= htmlspecialchars($recetteDetails->getTitle()) ?>">
                 </div>
-                <!-- <?= htmlspecialchars($recetteDetails->getPrepTimeMinutes()) ?> -->
             </div>
 
         </section>
@@ -75,7 +74,11 @@ require_once __DIR__ . "/inc/header.php";
                 </span>
 
                 <button type="button" id="plus">+</button>
+                <p id="person-label">
 
+<?= $recetteDetails->getPortions() == 1 ? 'Personne' : 'Personnes' ?>
+
+</p>
             </div>
             <div class="ingredients">
                 <?php foreach ($ingredients as $ingredient): ?>
