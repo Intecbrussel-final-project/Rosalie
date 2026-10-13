@@ -2,3 +2,5 @@
 config.php
 .DS_Store
 vendor
+mail_debug.log
+model/manager/local_emails.log

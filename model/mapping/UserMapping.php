@@ -69,7 +69,7 @@ class UserMapping extends AbstractMapping
     {
         return $this->generated_key;
     }
-    public function setGeneratedKey(string $generated_key): void
+    public function setGeneratedKey(?string $generated_key): void
     {
         if(empty($generated_key)) {
             $this->generated_key= uniqid('',true)."-".bin2hex(random_bytes(52));

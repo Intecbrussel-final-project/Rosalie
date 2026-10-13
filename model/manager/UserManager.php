@@ -41,7 +41,7 @@ public function createUser(UserMapping $user): bool
 }
 public function getUserByEmail(string $email): array|false
 {
-    $sql = "SELECT id, username, email, password_hash, role
+    $sql = "SELECT id, username, email, password_hash, role ,  verification_status
             FROM users
             WHERE email = :email
             LIMIT 1";
@@ -53,6 +53,23 @@ public function getUserByEmail(string $email): array|false
     ]);
 
     return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+public function verifyEmail(string $generatedKey): bool
+{
+    $sql = "UPDATE users
+            SET verification_status = 'verified',
+                generated_key = NULL
+            WHERE generated_key = :generated_key
+            AND verification_status = 'pending'";
+
+    $stmt = $this->connect->prepare($sql);
+
+    $stmt->execute([
+        'generated_key' => $generatedKey
+    ]);
+
+    return $stmt->rowCount() > 0;
 }
 
 } 

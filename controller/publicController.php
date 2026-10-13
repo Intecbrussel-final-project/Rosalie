@@ -1,11 +1,13 @@
 <?php
 // chemin vers les dépendances
+use model\manager\MailManager;
+
 use model\mapping\UserMapping;
 use model\manager\RecipeManager;
 use model\manager\IngredientsManager;
 use model\manager\StepsManager;
 use model\manager\UserManager;
-use model\manager\MailManager;
+
 use model\manager\CommentManager;
 use model\manager\RatingManager;
 use model\mapping\CommentMapping;
@@ -54,18 +56,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
 
     if ($user && password_verify($password, $user['password_hash'])) {
 
+        if ($user['verification_status'] !== 'verified') {
+            $_SESSION['login_error'] = "Veuillez confirmer votre adresse e-mail avant de vous connecter.";
+            $_SESSION['login_email'] = $email;
+    
+            header('Location: ?page=accueil');
+            exit;
+        }
+    
         session_regenerate_id(true);
-
+    
         $_SESSION['user_id'] = (int) $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];
-
+    
         header('Location: ?page=accueil');
         exit;
-
+    
     } else {
+    
         $_SESSION['login_error'] = "E-mail ou mot de passe incorrect.";
         $_SESSION['login_email'] = $email;
+    
         header('Location: ?page=accueil');
         exit;
     }
@@ -117,6 +129,7 @@ elseif ($page === 'inscription') {
     }
     if (empty($errors)) {
 
+    
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $user = new UserMapping([
             'username' => $username,
@@ -124,20 +137,48 @@ elseif ($page === 'inscription') {
             'password_hash' => $passwordHash,
             'generated_key' => ''
         ]);
-        $userManager->createUser($user);
 
-       /*  if ($userManager->createUser($user)) {
-                $mailManager = new MailManager();
+        if ($userManager->createUser($user)) {
+            $success = true;
+            
+
+            
+            $mailManager = new MailManager();
             $mailManager->sendVerificationEmail(
                 $email,
                 $user->getGeneratedKey()
-            ); */
-    
-            $success = true;
+            );
+            
         }
+        
     }
+}
     require_once RACINE_PATH. '/view/inscription.php';
     }
+
+
+    elseif ($page === 'verifyEmail') {
+
+        $key = $_GET['key'] ?? '';
+    
+        if ($key === '') {
+            $verificationError = "Lien de vérification invalide.";
+        } else {
+            $verified = $userManager->verifyEmail($key);
+    
+            if ($verified) {
+                $verificationSuccess = "Votre adresse e-mail a été confirmée.";
+            } else {
+                $verificationError = "Lien invalide ou déjà utilisé.";
+            }
+        }
+    
+        require RACINE_PATH . '/view/verifyEmail.php';
+        exit;
+    }
+
+
+
 
 elseif ($page === 'recetteDetails') {
 
@@ -211,6 +252,4 @@ elseif ($page === 'recetteDetails') {
 
     require RACINE_PATH . '/view/recetteDetails.php';
     exit;
-
-            }
-                
+  }
