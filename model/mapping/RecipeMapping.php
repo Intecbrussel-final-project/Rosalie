@@ -19,7 +19,7 @@ class RecipeMapping extends AbstractMapping
     // rempli seulement par RecipeManager::getTopRecipes()
     private ?float $average_rating = null;
     private int $ratings_count = 0;
-    
+    private int $portions = 0;
     // getters and setters
     public function getId():?int
     {
@@ -125,4 +125,15 @@ $min=$cook_time_minutes%60;
 $min=($min<10)?"0".$min:(string)$min;
 return $hours."h".$min;
 }
+
+public function getPortions(): ?int
+{
+    return $this->portions;
+}
+
+public function setPortions(?int $portions): void
+{
+    $this->portions = $portions;
+}
+
 }

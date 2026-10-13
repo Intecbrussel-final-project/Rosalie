@@ -64,6 +64,7 @@
 </footer>
 <script src="script/script.js"></script>
 <script src="script/validation.js"></script>
+<script src="script/portions.js"></script>
 </body>
 
 </html>
