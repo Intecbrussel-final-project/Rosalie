@@ -5,33 +5,51 @@ declare(strict_types=1);
 require_once RACINE_PATH . '/view/inc/header.php';
 ?>
 
-<main>
+<main class="verification-page">
+
     <?php if (isset($verificationSuccess)): ?>
 
-        <h1>
-            <?= htmlspecialchars($verificationSuccess, ENT_QUOTES, 'UTF-8') ?>
-        </h1>
+        <section class="verification-card verification-card--success">
 
-        <p>
-            Votre compte est maintenant activé.
-            Vous pouvez vous connecter.
-        </p>
+            <div class="verification-icon">✓</div>
 
-        <a href="?page=accueil">
-            Retour à l'accueil
-        </a>
+            <h1 class="verification-title">
+                <?= htmlspecialchars($verificationSuccess, ENT_QUOTES, 'UTF-8') ?>
+            </h1>
+
+            <p class="verification-text">
+                Votre compte est maintenant activé.<br>
+                Vous pouvez vous connecter.
+            </p>
+
+            <a class="verification-button" href="?page=accueil">
+                Retour à l'accueil
+            </a>
+
+        </section>
 
     <?php elseif (isset($verificationError)): ?>
 
-        <h1>
-            <?= htmlspecialchars($verificationError, ENT_QUOTES, 'UTF-8') ?>
-        </h1>
+        <section class="verification-card verification-card--error">
 
-        <a href="?page=accueil">
-            Retour à l'accueil
-        </a>
+            <div class="verification-icon">!</div>
+
+            <h1 class="verification-title">
+                <?= htmlspecialchars($verificationError, ENT_QUOTES, 'UTF-8') ?>
+            </h1>
+
+            <p class="verification-text">
+                La vérification de votre adresse e-mail n'a pas pu être effectuée.
+            </p>
+
+            <a class="verification-button" href="?page=accueil">
+                Retour à l'accueil
+            </a>
+
+        </section>
 
     <?php endif; ?>
+
 </main>
 
 <?php

@@ -45,7 +45,7 @@ require_once __DIR__ . "/inc/header.php";
             <input class="js-input-pwd" type="password" id="register-password" name="password" required>
 
             <div class="msg">
-                Au moins 10 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial
+                Au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial
             </div>
         </div>
 

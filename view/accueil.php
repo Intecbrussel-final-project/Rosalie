@@ -58,7 +58,12 @@ function pralineImage(string $mainImage): string
         <?php endif; ?>
     </section>
      <section class="hero-video">
-    <img class="video" src="/images/main-video.gif" alt="Description of the animation">
+   <!--  <img class="video" src="/images/main-video.gif" alt="Description of the animation"> -->
+    <video class="video" autoplay muted loop playsinline>
+
+    <source src="/images/main-video.mp4" type="video/mp4">
+
+</video>
     </section>
 </main>
 <?php

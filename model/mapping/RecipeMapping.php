@@ -16,6 +16,7 @@ class RecipeMapping extends AbstractMapping
     private  ?int $prep_time_minutes =null;
     private ?int $cook_time_minutes = null;
     private string $difficulty = '';
+    private string $budget = '';
     // rempli seulement par RecipeManager::getTopRecipes()
     private ?float $average_rating = null;
     private int $ratings_count = 0;
@@ -134,6 +135,17 @@ public function getPortions(): ?int
 public function setPortions(?int $portions): void
 {
     $this->portions = $portions;
+}
+
+
+public function getBudget(): string
+{
+    return $this->budget;
+}
+
+public function setBudget(string $budget): void
+{
+    $this->budget = $budget;
 }
 
 }

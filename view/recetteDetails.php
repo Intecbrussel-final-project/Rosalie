@@ -21,7 +21,7 @@ require_once __DIR__ . "/inc/header.php";
 
                     $flavorClass = strtolower($flavor);
                     $flavorClass = str_replace(
-                        ["l’", "l'", "l"],
+                        ["l’", "l'"],
                         '',
                         $flavorClass
                     );
@@ -129,7 +129,7 @@ require_once __DIR__ . "/inc/header.php";
                 </div>
                 <div class="recipe-detail">
                     <img src="images/svg/money.svg" alt="">
-                    <p class="recipe-detail-desc"><?= htmlspecialchars($recetteDetails->getDifficulty()) ?></p>
+                    <p class="recipe-detail-desc"><?= htmlspecialchars($recetteDetails->getBudget()) ?></p>
                 </div>
             </div>
         </section>
