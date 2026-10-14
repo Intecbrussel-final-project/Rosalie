@@ -74,6 +74,7 @@ $isLogged = $currentUserId !== null;
                                 <li><?= htmlspecialchars($error) ?></li>
                             <?php endforeach; ?>
                         </ul>
+                        
                     <?php endif; ?>
                 </form>
             <?php else: ?>
@@ -93,7 +94,7 @@ $isLogged = $currentUserId !== null;
         </div>
     </div>
 
-    <div class="container">
+       <div class="container">
         <?php if (empty($comments)): ?>
             <p class="reviews-empty">Soyez le premier à donner votre avis sur cette recette.</p>
         <?php else: ?>
@@ -114,6 +115,28 @@ $isLogged = $currentUserId !== null;
                     </li>
                 <?php endforeach; ?>
             </ul>
+
+            <?php if ($totalPages > 1):
+                $baseUrl = '?page=recetteDetails&slug=' . urlencode($recetteDetails->getSlug()) . '&avis_page=';
+            ?>
+                <nav class="reviews-pagination" aria-label="Pagination des avis">
+                    <?php if ($currentPage > 1): ?>
+                        <a href="<?= htmlspecialchars($baseUrl . ($currentPage - 1)) ?>#avis" rel="prev">‹ Précédent</a>
+                    <?php endif; ?>
+
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <?php if ($i === $currentPage): ?>
+                            <span aria-current="page"><?= $i ?></span>
+                        <?php else: ?>
+                            <a href="<?= htmlspecialchars($baseUrl . $i) ?>#avis"><?= $i ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+
+                    <?php if ($currentPage < $totalPages): ?>
+                        <a href="<?= htmlspecialchars($baseUrl . ($currentPage + 1)) ?>#avis" rel="next">Suivant ›</a>
+                    <?php endif; ?>
+                </nav>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>

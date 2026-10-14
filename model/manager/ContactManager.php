@@ -19,18 +19,5 @@ class ContactManager implements ManagerInterface
 
 
 
-public function createMessage(ContactMapping $contact): bool
-{
- $sql="INSERT INTO contact_messages (`name`, `email`,`subject`,`message`)
-    VALUES (:name, :email, :subject, :message)";
-            $stmt = $this->connect->prepare($sql);
-            $stmt->bindValue(':name',$contact->getName());
-            $stmt->bindValue(':email',$contact->getEmail());
-            $stmt->bindValue(':subject',$contact->getSubject());
-            $stmt->bindValue(':message',$contact->getMessage());
-            return $stmt->execute();
-}
-
-
 
 } 

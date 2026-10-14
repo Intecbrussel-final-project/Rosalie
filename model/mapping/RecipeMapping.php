@@ -36,23 +36,23 @@ class RecipeMapping extends AbstractMapping
         return $this->title;
     }
     public function setTitle(string $title): void
-    {
-        $title = htmlspecialchars(strip_tags(trim($title)));
-        if(strlen($title)<3 || strlen($title)>120){
-            throw new Exception("Le titre de la recette doit faire entre 3 et 120 caractères");
-        }
-        $this->title = $title;
+{
+    $title = trim(strip_tags($title));
+    if (mb_strlen($title) < 3 || mb_strlen($title) > 120) {
+        throw new Exception("Le titre de la recette doit faire entre 3 et 120 caractères");
     }
+    $this->title = $title;
+}
     public function getSlug(): string
     {
         return $this->slug;
     }
     public function setSlug(string $slug): void
     {
-        $slug = htmlspecialchars(strip_tags(trim($slug)));
-        if(strlen($slug)<3 || strlen($slug)>124){
-            throw new Exception("Le slug de l'article doit faire entre 3 et 120 caractères");
-        }
+       $slug = strip_tags(trim($slug));
+if(mb_strlen($slug)<3 || mb_strlen($slug)>170){
+    throw new Exception("Le slug de la recette doit faire entre 3 et 170 caractères");
+}
         $this->slug = $slug;
     }
     public function getDescription(): string

@@ -311,7 +311,19 @@ elseif ($page === 'recetteDetails') {
         }
     }
 
-    $comments = $commentManager->getPublishedByRecipeId($id);
+ $perPage = 3;
+$totalComments = $commentManager->countPublishedByRecipeId($id);
+$totalPages = max(1, (int) ceil($totalComments / $perPage));
+
+// номер сторінки з URL, обмежений межами 1..$totalPages
+$currentPage = (int) ($_GET['avis_page'] ?? 1);
+$currentPage = max(1, min($currentPage, $totalPages));
+
+$comments = $commentManager->getPublishedByRecipeId(
+    $id,
+    $perPage,
+    ($currentPage - 1) * $perPage
+);
     $ratingSummary = $ratingManager->getSummary($id);
 
 
