@@ -860,6 +860,98 @@ justify-content: space-between;
 }
 
 /* ---------- INSCRIPTION ---------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #888;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
+}
+
+.modal-close:hover {
+
+  color: #333;
+
+  background: #f3f3f3;
+
+}
+
+.modal-box {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  padding: 48px 42px;
+  background: #fff;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+
+/* TITLE */
+
+.modal-box h2 {
+  margin: 0 0 24px;
+  color: #557153;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+
+/* MAIN TEXT */
+
+.modal-info {
+  margin: 0;
+  color: var(--bg-dark-brown);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.modal-info strong {
+  display: inline-block;
+  margin: 4px 0;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+
+/* SPAM */
+
+.modal-spam-hint {
+  margin: 20px 0 32px;
+  color: var(--color-orange);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+
 .register {
   width: 100%; /* body en flex : sans ça, le formulaire se rétrécit */
   max-width: 420px;

@@ -102,4 +102,55 @@ class MailManager
             )
         );
     }
+
+
+    public function sendContactNotification(
+        string $name,
+        string $email,
+        string $subject,
+        string $content
+    ): bool {
+        if ($this->mailer === null) {
+            $this->log(
+                'CONTACT_ABORTED',    
+                'Mailer non initialisé. Expéditeur: ' . $email
+            );
+            return false;
+        }
+    
+        $message = (new Email())
+            ->from($this->senderEmail)
+            ->to($this->senderEmail)
+            ->replyTo($email)
+            ->subject('Nouveau message : ' . $subject)
+            ->text(
+                "Nouveau message depuis Maison Rosalie\n\n" .
+                "Nom : {$name}\n" .
+                "E-mail : {$email}\n" .
+                "Sujet : {$subject}\n\n" .
+                "Message :\n{$content}"
+            );
+    
+        $this->log(
+            'CONTACT_SEND_START',
+            'Tentative d’envoi du message de: ' . $email
+        );
+    
+        try {
+
+            $this->mailer->send($message);
+            $this->log(
+                'CONTACT_SEND_OK',
+                'Notification envoyée pour le message de: ' . $email
+            );
+            return true;
+        } catch (Throwable $e) {
+            $this->logException(
+                'CONTACT_SEND_ERROR',$e
+             );
+    
+            return false;
+        }
+    }
+
 }

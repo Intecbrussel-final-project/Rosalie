@@ -4,11 +4,6 @@ require_once __DIR__ . "/inc/header.php";
 
 <main class="register">
     <h1 class="register-title">Créer un compte</h1>
-
-    <?php if ($success): ?>
-        <p class="register-success">Votre compte a bien été créé.</p>
-    <?php endif; ?>
-
     <?php if (!empty($errors)): ?>
         <ul class="register-errors">
             <?php foreach ($errors as $error): ?>
@@ -17,7 +12,7 @@ require_once __DIR__ . "/inc/header.php";
         </ul>
     <?php endif; ?>
 
-    <form class="register-form"  method="post" action="?page=inscription">
+    <form class="register-form" method="post" action="?page=inscription">
 
         <div class="field" id="f-name">
             <label for="register-username">Nom d'utilisateur</label>
@@ -65,7 +60,30 @@ require_once __DIR__ . "/inc/header.php";
 
     </form>
 </main>
+<?php if ($success): ?>
+    <div class="modal-overlay">
+        <div class="modal-box">
+            <button type="button" class="modal-close" aria-label="Fermer" data-modal-close>
+                &times;
+            </button>
+            <h2>Compte créé !</h2>
 
+            <p class="modal-info">
+                Un e-mail de confirmation a été envoyé à
+                <strong>
+                    <?= htmlspecialchars($_POST['email'] ?? '') ?>
+                </strong>
+                <br>
+                Cliquez sur le lien reçu pour activer votre compte.
+            </p>
+
+            <p class="modal-spam-hint">
+                Vous ne trouvez pas l’e-mail ? Vérifiez vos spams.
+            </p>
+
+        </div>
+    </div>
+<?php endif; ?>
 <?php
 require_once __DIR__ . "/inc/footer.php";
 ?>

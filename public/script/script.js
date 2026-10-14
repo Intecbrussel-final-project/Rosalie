@@ -96,3 +96,21 @@ if (mapElement && typeof L !== "undefined") {
     .openPopup();
 
 }
+/* REGISTRATION MODAL CLOSE */
+const modal = document.querySelector('.modal-overlay');
+const closeButton = document.querySelector('[data-modal-close]');
+
+function closeModal() {
+    modal?.remove();
+}
+closeButton?.addEventListener('click', closeModal);
+modal?.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        closeModal();
+    }
+});
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+});

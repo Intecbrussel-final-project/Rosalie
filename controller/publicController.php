@@ -129,7 +129,15 @@ elseif ($page === 'contact') {
                 'message' => $message
             ]);
             if ($contactManager->createMessage($contact)) {
+                $mailManager = new MailManager();
+                $mailSent = $mailManager->sendContactNotification(
+                    $name,
+                    $email,
+                    $subject,
+                    $message
+                );
                 $success = true;
+            
             }
         }
     }
