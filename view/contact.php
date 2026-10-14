@@ -48,20 +48,20 @@ require_once __DIR__ . "/inc/header.php";
 
     <section class="contact-form-section">
         <div class="container">
-            <form class="contact-form" action="/?page=contact" method="post">
+            <form class="contact-form" action="?page=contact" method="post">
                 <h2 class="contact-form-title">Envoyez-nous un message</h2>
 
-                <label class="sr-only" for="name">Nom complet</label>
-                <input class="contact-field" type="text" id="name" name="name" placeholder="Nom complet *" required>
+                <label class="sr-only" for="name" >Nom complet</label>
+                <input class="contact-field" type="text" id="name" name="name" maxlength="100" placeholder="Nom complet *" required>
 
-                <label class="sr-only" for="email">Adresse e-mail</label>
-                <input class="contact-field" type="email" id="email" name="email" placeholder="Adresse e-mail *"
+                <label class="sr-only" for="email" >Adresse e-mail</label>
+                <input class="contact-field" type="email" id="email" name="email" maxlength="254" placeholder="Adresse e-mail *"
                     required>
-                <label class="sr-only" for="subject">Sujet</label>
-                <input class="contact-field" type="text" id="subject" name="subject" placeholder="Sujet *" required>
+                <label class="sr-only" for="subject" >Sujet</label>
+                <input class="contact-field" type="text" id="subject" name="subject" maxlength="120" placeholder="Sujet *" required>
 
                 <label class="sr-only" for="message">Votre message</label>
-                <textarea class="contact-field contact-textarea" id="message" name="message" rows="10"
+                <textarea class="contact-field contact-textarea" id="message" name="message"  maxlength="2000" rows="10"
                     placeholder="Votre message *" required></textarea>
 
                 <button class="contact-submit" type="submit">

@@ -72,10 +72,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
         $_SESSION['user_id'] = (int) $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];
-    
+
+        if ($user['role'] === 'admin') {
+            header('Location: ?pg=admin');
+            exit;
+        }
+        
         header('Location: ?page=accueil');
+        
         exit;
-    
     } else {
     
         $_SESSION['login_error'] = "E-mail ou mot de passe incorrect.";
@@ -107,18 +112,23 @@ elseif ($page === 'contact') {
         $email = trim($_POST['email'] ?? '');
         $subject = trim($_POST['subject'] ?? '');
         $message = trim($_POST['message'] ?? '');
-
-        if ($name === '') {
-            $errors[] = "Le nom est obligatoire.";
+        if ($name === '' || mb_strlen($name) > 100) {
+            $errors[] = 'Le nom doit contenir entre 1 et 100 caractères.';
         }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = "L'adresse e-mail n'est pas valide.";
+        
+        if (
+            !filter_var($email, FILTER_VALIDATE_EMAIL) ||
+            mb_strlen($email) > 254
+        ) {
+            $errors[] = 'Veuillez entrer une adresse e-mail valide.';
         }
-        if ($subject === '') {
-            $errors[] = "Le sujet est obligatoire.";
+        
+        if ($subject === '' || mb_strlen($subject) > 120) {
+            $errors[] = 'Le sujet doit contenir entre 1 et 120 caractères.';
         }
-        if ($message === '') {
-            $errors[] = "Le message est obligatoire.";
+        
+        if ($message === '' || mb_strlen($message) > 2000) {
+            $errors[] = 'Le message doit contenir entre 1 et 2000 caractères.';
         }
         if (empty($errors)) {
 
@@ -169,8 +179,15 @@ elseif ($page === 'inscription') {
     if (empty($username) || strlen($username) < 3 || strlen($username) > 50) {
         $errors[] = "Le nom d'utilisateur n'est pas valide";
     }
-    if (empty($password) || strlen($password) < 8) {
-        $errors[] = "Le mot de passe doit contenir au moins 8 caractères";
+    if (strlen($password) < 8 ||
+        !preg_match('/[A-Z]/', $password) ||
+        !preg_match('/[a-z]/', $password) ||
+        !preg_match('/[0-9]/', $password) ||
+        !preg_match('/[^A-Za-z0-9]/', $password)
+    ) {
+    
+        $errors[] = 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.';
+    
     }
     if ($password !== $passwordConfirm) {
         $errors[] = "Les mots de passe ne correspondent pas";
