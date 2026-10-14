@@ -12,6 +12,8 @@ class ContactMapping extends AbstractMapping
     private string $email = '';
     private string $subject = '';
     private string $message = '';
+    // notification admin : false tant que le message n'a pas été lu
+    private bool $is_read = false;
     private ?string $created_at = null;
  
 
@@ -54,6 +56,14 @@ class ContactMapping extends AbstractMapping
     public function setSubject(string $subject): void
     {
         $this->subject = $subject;
+    }
+    public function getIsRead(): bool
+    {
+        return $this->is_read;
+    }
+    public function setIsRead(bool $is_read): void
+    {
+        $this->is_read = $is_read;
     }
     public function getCreatedAt(): ?string
     {

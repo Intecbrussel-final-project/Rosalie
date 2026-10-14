@@ -1,5 +1,6 @@
 <?php
 // path: controller/routerController.php
+use model\manager\ContactManager;
 
 
 # Connexion PDO
@@ -15,6 +16,16 @@ try {
     );
 } catch (Exception $e) {
     die($e->getMessage());
+}
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// notifications de l'admin : nombre de messages de contact non lus (badge du header)
+$unreadContactCount = 0;
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    $unreadContactCount = (new ContactManager($connectPDO))->countUnread();
 }
 
 // si nous sommes connecté en tant qu'administrateur et que nous avons cliqué sur la partie administration

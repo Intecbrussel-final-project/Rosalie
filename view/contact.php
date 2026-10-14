@@ -51,18 +51,36 @@ require_once __DIR__ . "/inc/header.php";
             <form class="contact-form" action="?page=contact" method="post">
                 <h2 class="contact-form-title">Envoyez-nous un message</h2>
 
+                <?php if (!empty($errors)): ?>
+                    <ul class="contact-errors" role="alert">
+                        <?php foreach ($errors as $error): ?>
+                            <li><?= htmlspecialchars($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+
+                <!-- champ piège anti-robots : invisible pour les visiteurs -->
+                <div class="contact-hp" aria-hidden="true">
+                    <label for="website">Ne pas remplir</label>
+                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                </div>
+
                 <label class="sr-only" for="name" >Nom complet</label>
-                <input class="contact-field" type="text" id="name" name="name" maxlength="100" placeholder="Nom complet *" required>
+                <input class="contact-field" type="text" id="name" name="name" maxlength="100" placeholder="Nom complet *"
+                    value="<?= htmlspecialchars($values['name']) ?>" required>
 
                 <label class="sr-only" for="email" >Adresse e-mail</label>
                 <input class="contact-field" type="email" id="email" name="email" maxlength="254" placeholder="Adresse e-mail *"
-                    required>
+                    value="<?= htmlspecialchars($values['email']) ?>" required>
                 <label class="sr-only" for="subject" >Sujet</label>
-                <input class="contact-field" type="text" id="subject" name="subject" maxlength="120" placeholder="Sujet *" required>
+                <input class="contact-field" type="text" id="subject" name="subject" maxlength="120" placeholder="Sujet *"
+                    value="<?= htmlspecialchars($values['subject']) ?>" required>
 
                 <label class="sr-only" for="message">Votre message</label>
                 <textarea class="contact-field contact-textarea" id="message" name="message"  maxlength="2000" rows="10"
-                    placeholder="Votre message *" required></textarea>
+                    placeholder="Votre message *" required><?= htmlspecialchars($values['message']) ?></textarea>
 
                 <button class="contact-submit" type="submit">
                     Envoyer le message
@@ -79,6 +97,33 @@ require_once __DIR__ . "/inc/header.php";
     </section>
 
 </main>
+
+<?php if ($contactSuccess): ?>
+    <div class="modal-overlay">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+            <button type="button" class="modal-close" aria-label="Fermer" data-modal-close>
+                &times;
+            </button>
+            <h2 id="contact-modal-title">Message envoyé !</h2>
+
+            <p class="modal-info">
+                Merci <?= htmlspecialchars($contactSuccess['name']) ?>, nous avons bien reçu votre message
+                et nous vous répondrons dans les plus brefs délais.
+            </p>
+
+            <?php if ($contactSuccess['confirmationSent']): ?>
+                <p class="modal-info">
+                    Un e-mail de confirmation a été envoyé à
+                    <strong><?= htmlspecialchars($contactSuccess['email']) ?></strong>
+                </p>
+
+                <p class="modal-spam-hint">
+                    Vous ne trouvez pas l’e-mail ? Vérifiez vos spams.
+                </p>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php endif; ?>
 
 <?php
 require_once __DIR__ . "/inc/footer.php";

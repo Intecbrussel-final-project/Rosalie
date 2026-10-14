@@ -23,9 +23,6 @@ $contactManager = new ContactManager($connectPDO);
 
 $page = $_GET['page']?? 'accueil';
 
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
 /* ================= LOGOUT ================= */
 if ($page === 'logout' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         # destruction des variables de sessions (réinitialisation du tableau $_SESSION)
@@ -104,7 +101,11 @@ if ($page === 'accueil') {
 elseif ($page === 'contact') {
 
     $errors = [];
-    $success = false;
+    $values = ['name' => '', 'email' => '', 'subject' => '', 'message' => ''];
+
+    // pop-up de confirmation après l'envoi (affichée une seule fois)
+    $contactSuccess = $_SESSION['contact_success'] ?? null;
+    unset($_SESSION['contact_success']);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -112,6 +113,11 @@ elseif ($page === 'contact') {
         $email = trim($_POST['email'] ?? '');
         $subject = trim($_POST['subject'] ?? '');
         $message = trim($_POST['message'] ?? '');
+        $values = ['name' => $name, 'email' => $email, 'subject' => $subject, 'message' => $message];
+
+        if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+            $errors[] = 'La session a expiré, veuillez réessayer.';
+        }
         if ($name === '' || mb_strlen($name) > 100) {
             $errors[] = 'Le nom doit contenir entre 1 et 100 caractères.';
         }
@@ -138,16 +144,30 @@ elseif ($page === 'contact') {
                 'subject' => $subject,
                 'message' => $message
             ]);
-            if ($contactManager->createMessage($contact)) {
-                $mailManager = new MailManager();
-                $mailSent = $mailManager->sendContactNotification(
-                    $name,
-                    $email,
-                    $subject,
-                    $message
-                );
-                $success = true;
-            
+            $confirmationSent = false;
+            try {
+                // champ piège invisible : seul un robot le remplit, on n'enregistre et n'envoie rien
+                if (trim($_POST['website'] ?? '') === '') {
+                    // le message enregistré (non lu) devient une notification côté admin
+                    $contactManager->createMessage($contact);
+
+                    $mailManager = new MailManager();
+                    // notification par e-mail à l'admin
+                    $mailManager->sendContactNotification($name, $email, $subject, $message);
+                    // accusé de réception par e-mail au visiteur
+                    $confirmationSent = $mailManager->sendContactConfirmation($name, $email, $subject, $message);
+                }
+
+                $_SESSION['contact_success'] = [
+                    'name' => $name,
+                    'email' => $email,
+                    'confirmationSent' => $confirmationSent,
+                ];
+                // Post/Redirect/Get : évite le double envoi au rafraîchissement
+                header('Location: ?page=contact');
+                exit;
+            } catch (Exception $e) {
+                $errors[] = "Une erreur est survenue, votre message n'a pas été envoyé. Veuillez réessayer.";
             }
         }
     }

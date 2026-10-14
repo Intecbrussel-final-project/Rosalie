@@ -117,6 +117,22 @@
                 </div>
               <?php endif; ?>
             </div>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+              <?php $unreadCount = $unreadContactCount ?? 0; ?>
+              <!-- Notifications admin : messages de contact non lus -->
+              <a class="nav-notif" href="?pg=admin&amp;page=messages" title="Messages de contact"
+                aria-label="Messages de contact<?= $unreadCount > 0 ? ' : ' . $unreadCount . ' non lu' . ($unreadCount > 1 ? 's' : '') : '' ?>">
+                <svg class="icon icon-line" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true">
+                  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+                  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+                </svg>
+                <?php if ($unreadCount > 0): ?>
+                  <span class="notif-badge" aria-hidden="true"><?= $unreadCount > 99 ? '99+' : $unreadCount ?></span>
+                <?php endif; ?>
+              </a>
+            <?php endif; ?>
             <a href="?page=recettes">
               <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path

@@ -123,9 +123,11 @@ CREATE TABLE IF NOT EXISTS `maison_rosalie`.`contact_messages` (
   `email` VARCHAR(254) NOT NULL,
   `subject` VARCHAR(120) NOT NULL,
   `message` VARCHAR(2000) NOT NULL,
+  `is_read` TINYINT(1) NOT NULL DEFAULT 0,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  INDEX `idx_contact_messages_date` (`created_at` ASC) VISIBLE)
+  INDEX `idx_contact_messages_date` (`created_at` ASC) VISIBLE,
+  INDEX `idx_contact_messages_is_read` (`is_read` ASC) VISIBLE)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
