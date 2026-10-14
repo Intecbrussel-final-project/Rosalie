@@ -14,7 +14,11 @@ try {
         ]
     );
 } catch (Exception $e) {
-    die($e->getMessage());
+    // en local (WAMP) l'erreur reste affichée ; en ligne elle va dans le log du serveur,
+    // pour ne pas montrer l'hôte ou l'utilisateur de la base aux visiteurs
+    error_log('Connexion à la base impossible : ' . $e->getMessage());
+    http_response_code(500);
+    die(ini_get('display_errors') ? $e->getMessage() : 'Le site est momentanément indisponible. Merci de réessayer plus tard.');
 }
 
 // si nous sommes connecté en tant qu'administrateur et que nous avons cliqué sur la partie administration
